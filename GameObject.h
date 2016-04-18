@@ -13,6 +13,9 @@ public:
     float yPos;
     char character;
     bool isRigid;
+    bool physics;
+    float xSpeed = 0;
+    float ySpeed = 0;
 
     GameObject() {
 

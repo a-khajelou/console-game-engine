@@ -13,11 +13,8 @@
 class MyGame : public Engine {
     GameObject *runner = new GameObject('@', 0, 0);
 
-    bool isJumping;
-    bool isLanding;
-    float jumpingDeltaY;
-
     int speed;
+    float runnerAcceleration;
 
     int score() {
         return (int) runner->xPos * 10;
@@ -25,14 +22,16 @@ class MyGame : public Engine {
 
     void init() {
         mainObject = runner;
-        speed = 12;
+        speed = 6;
+        runner->physics = true;
 
         gameObjects.push_back(runner);
 
         //creating the game map !
-        int range[4] = {3, 4, 4, 3};
+        int range[4] = {3, 5, 7, 11};
         for (int i = 2; i < 402; ++i) {
             for(int j=0; j <= getHeight(); j++){
+                int tmp = (j == 0) ? j+1 : ((j == getHeight()) ? j-1 : j);
                 if(i%getHeight() != j && i%getHeight() != j+1 && i%getHeight() != j-1){
                     GameObject *tree = new GameObject('#', i * (range[(i % 4)] * 5), j);
                     gameObjects.push_back(tree);
@@ -46,13 +45,12 @@ class MyGame : public Engine {
         monitor = "your score : " + to_string(score());
 
         if (isKeyPressed) {
-            isJumping = true;
             isKeyPressed = false;
-            jumpingDeltaY = 0;
+            runner->ySpeed += 4;
+        }else{
+            if(runner->ySpeed > 1.5)
+                runner->ySpeed = 1.5;
         }
-
-        if (isJumping || isLanding)
-            doJump();
 
         for (list<GameObject *>::iterator it = gameObjects.begin(); it != gameObjects.end(); ++it) {
             GameObject *gameObject = (GameObject *) *it;
@@ -60,23 +58,6 @@ class MyGame : public Engine {
                 (int) gameObject->xPos == (int) runner->xPos &&
                 (int) gameObject->yPos == (int) runner->yPos)
                 stopLoop("The game is Over ! your high score is : " + to_string(score()) + "\n\n\n");
-        }
-    }
-
-
-    void doJump() {
-        if (jumpingDeltaY < 2 && isJumping && (int) runner->yPos < getHeight()) {
-            jumpingDeltaY += speed * getDeltaTime()/2;
-            runner->yPos += speed * getDeltaTime()/2;
-        }
-        else {
-            isJumping = false;
-            isLanding = true;
-            runner->yPos -= speed * getDeltaTime()/2;
-            if ((int) runner->yPos == 0) {
-                runner->yPos = 0;
-                isLanding = false;
-            }
         }
     }
 

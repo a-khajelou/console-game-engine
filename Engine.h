@@ -37,7 +37,7 @@ private:
     int realHeight;
 
     void clearScreen() {
-        cout << string(100, '\n') << flush;
+        cerr << string(100, '\n') << flush;
     }
 
     void render() {
@@ -45,7 +45,7 @@ private:
         if (mainObject == NULL)
             stopLoop("You must set the mainObject a value, because the camera is fixed on the main object");
         else {
-            cout << "Delta Time: " << deltaTime << "\t\t | FPS : " << (float) 1 / deltaTime << "\t\t | " << monitor <<
+            cerr << "Delta Time: " << deltaTime << "\t\t | FPS : " << (float) 1 / deltaTime << "\t\t | " << monitor <<
             endl << endl;
             gameBoard = new char *[realHeight];
             for (int row = 0; row < realHeight; ++row) {
@@ -73,14 +73,28 @@ private:
 
             for (int row = 0; row < realHeight; row++) {
                 for (int col = 0; col < width; col++)
-                    cout << gameBoard[row][col] << flush;
-                cout << endl << flush;
+                    cerr << gameBoard[row][col] << flush;
+                cerr << endl << flush;
             }
         }
     }
 
     void physEngine(){
+        for (list<GameObject *>::iterator it = gameObjects.begin(); it != gameObjects.end(); ++it) {
+            GameObject *gameObject = (GameObject *) *it;
+            if(gameObject->physics){
+                gameObject->ySpeed -= (9)*getDeltaTime();
+            }
+            gameObject->yPos += gameObject->ySpeed*getDeltaTime();
+            gameObject->xPos += gameObject->xSpeed*getDeltaTime();
 
+            if(gameObject->yPos > getHeight())
+                gameObject->yPos = getHeight();
+            if(gameObject->yPos < 0) {
+                gameObject->yPos = 0;
+                gameObject->ySpeed = 0;
+            }
+        }
     }
 
 protected:
@@ -98,7 +112,7 @@ protected:
 
     void stopLoop(string _message) {
         notStopCommand = false;
-        cout << "\n\n\nprocess finished with message :" << _message << endl;
+        cerr << "\n\n\nprocess finished with message :" << _message << endl;
     }
 
     int getWidth(){
