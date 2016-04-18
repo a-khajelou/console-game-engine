@@ -8,6 +8,8 @@
 
 #include "Engine.h"
 
+//this is a simple flappy bird game
+
 class MyGame : public Engine {
     GameObject *runner = new GameObject('@', 0, 0);
 
@@ -28,30 +30,14 @@ class MyGame : public Engine {
         gameObjects.push_back(runner);
 
         //creating the game map !
-        int range[4] = {3, 4, 5, 6};
-        for (int i = 2; i < 400; i++) {
-            if (i <= 20) {
-                GameObject *tree = new GameObject(char(35), i * (range[(i % 4)] * 5), 0);
-                gameObjects.push_back(tree);
+        int range[4] = {3, 4, 4, 3};
+        for (int i = 2; i < 402; ++i) {
+            for(int j=0; j <= getHeight(); j++){
+                if(i%getHeight() != j && i%getHeight() != j+1 && i%getHeight() != j-1){
+                    GameObject *tree = new GameObject('#', i * (range[(i % 4)] * 5), j);
+                    gameObjects.push_back(tree);
+                }
             }
-            if (i > 20 && i <= 30) {
-                GameObject *tree = new GameObject(char(35), i * (range[(i % 4)] * 5), 0);
-                gameObjects.push_back(tree);
-                tree = new GameObject(char(35), i * (range[(i % 4)] * 5), 1);
-                gameObjects.push_back(tree);
-            }
-            if (i > 30) {
-                GameObject *tree = new GameObject(char(35), i * (range[(i % 4)] * 5), 0);
-                gameObjects.push_back(tree);
-                tree = new GameObject(char(35), i * (range[(i % 4)] * 5), 1);
-                gameObjects.push_back(tree);
-                tree = new GameObject(char(35), (i * (range[(i % 4)] * 5)) + 1, 0);
-                gameObjects.push_back(tree);
-                tree = new GameObject(char(35), (i * (range[(i % 4)] * 5)) + 1, 1);
-                gameObjects.push_back(tree);
-            }
-
-
         }
     }
 
@@ -79,14 +65,14 @@ class MyGame : public Engine {
 
 
     void doJump() {
-        if (jumpingDeltaY < 4 && isJumping && (int)runner->yPos <= 13) {
-            jumpingDeltaY += speed * getDeltaTime();
-            runner->yPos += speed * getDeltaTime();
+        if (jumpingDeltaY < 2 && isJumping && (int) runner->yPos < getHeight()) {
+            jumpingDeltaY += speed * getDeltaTime()/2;
+            runner->yPos += speed * getDeltaTime()/2;
         }
         else {
             isJumping = false;
             isLanding = true;
-            runner->yPos -= speed * getDeltaTime();
+            runner->yPos -= speed * getDeltaTime()/2;
             if ((int) runner->yPos == 0) {
                 runner->yPos = 0;
                 isLanding = false;

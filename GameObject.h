@@ -12,6 +12,7 @@ public:
     float xPos;
     float yPos;
     char character;
+    bool isRigid;
 
     GameObject() {
 
